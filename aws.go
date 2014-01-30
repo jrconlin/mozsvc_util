@@ -6,8 +6,8 @@ import (
 	"net/url"
 )
 
-/* Get the public AWS hostname for this machine. 
- * TODO: Make this a generic utility for getting public info from 
+/* Get the public AWS hostname for this machine.
+ * TODO: Make this a generic utility for getting public info from
  * the aws meta server?
  */
 func GetAWSPublicHostname() (hostname string, err error) {

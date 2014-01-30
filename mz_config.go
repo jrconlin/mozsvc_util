@@ -51,7 +51,7 @@ func MzGetConfig(filename string) JsMap {
 
 /* Get a value from the config map, providing an optional default.
    This is a fairly common behavior for me.
- */
+*/
 func MzGet(ma JsMap, key string, def string) string {
 	if val, ok := ma[key].(string); ok {
 		return val

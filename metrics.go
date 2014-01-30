@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* A fairly generic Metrics logging package. 
+/* A fairly generic Metrics logging package.
  */
 package util
 
@@ -21,7 +21,6 @@ type Metrics struct {
 	prefix string
 	//  statsdc *statsd.Client
 }
-
 
 /* Generate a new metric counter with the optional prefix
  */
@@ -55,7 +54,7 @@ func (self *Metrics) StatsdTarget(target string) (err error) {
 }
 */
 
-/* Return a snapshot of the current metric counters 
+/* Return a snapshot of the current metric counters
  */
 func (self *Metrics) Snapshot() map[string]int64 {
 	defer metrex.Unlock()
@@ -83,4 +82,3 @@ func (self *Metrics) IncrementBy(metric string, count int) {
 		}
 	*/
 }
-
