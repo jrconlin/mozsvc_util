@@ -2,11 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* A fairly generic Metrics logging package.
- */
 package util
 
 import (
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -18,26 +17,20 @@ var metrex sync.Mutex
 
 type Metrics struct {
 	dict   map[string]int64
+    timer  map[string]float64
 	prefix string
+	logger *HekaLogger
 	//  statsdc *statsd.Client
 }
 
-/* Generate a new metric counter with the optional prefix
- */
-func NewMetrics(prefix string) (self *Metrics) {
+func NewMetrics(prefix string, logger *HekaLogger) (self *Metrics) {
 	self = &Metrics{
 		dict:   make(map[string]int64),
+        timer:  make(map[string]float64),
 		prefix: prefix,
+		logger: logger,
 	}
 	return self
-}
-
-func (self *Metrics) Increment(metric string) {
-	self.IncrementBy(metric, 1)
-}
-
-func (self *Metrics) Decrement(metric string) {
-	self.IncrementBy(metric, -1)
 }
 
 func (self *Metrics) Prefix(newPrefix string) {
@@ -53,17 +46,17 @@ func (self *Metrics) StatsdTarget(target string) (err error) {
 	return
 }
 */
-
-/* Return a snapshot of the current metric counters
- */
-func (self *Metrics) Snapshot() map[string]int64 {
+func (self *Metrics) Snapshot() map[string]interface{} {
 	defer metrex.Unlock()
 	metrex.Lock()
-	oldMetrics := make(map[string]int64)
+	oldMetrics := make(map[string]interface{})
 	// copy the old metrics
 	for k, v := range self.dict {
-		oldMetrics[k] = v
+		oldMetrics["counter." + k] = v
 	}
+    for k, v := range self.timer {
+        oldMetrics["avg." + k] = v
+    }
 	return oldMetrics
 }
 
@@ -77,8 +70,41 @@ func (self *Metrics) IncrementBy(metric string, count int) {
 	}
 	atomic.AddInt64(&m, int64(count))
 	self.dict[metric] = m
-	/*	if statsdc != nil {
-			statsdc.Inc(metric, int64(count), 1.0)
-		}
-	*/
+	if self.logger != nil {
+		self.logger.Info("metrics", "counter."+metric,
+			Fields{"value": strconv.FormatInt(m, 10),
+                   "type": "counter"})
+	}
+}
+
+func (self *Metrics) Increment(metric string) {
+	self.IncrementBy(metric, 1)
+}
+
+func (self *Metrics) Decrement(metric string) {
+	self.IncrementBy(metric, -1)
+}
+
+func (self *Metrics) Timer(metric string, value int64) {
+	defer metrex.Unlock()
+	metrex.Lock()
+    if m, ok := self.timer[metric]; !ok {
+        self.timer[metric] = float64(value)
+    } else {
+        // calculate running average
+        fv := float64(value)
+        dm := (fv - m)/2
+        switch {
+        case fv < m:
+            self.timer[metric] = m - dm
+        case fv > m:
+            self.timer[metric] = m + dm
+        }
+    }
+
+	if self.logger != nil {
+		self.logger.Info("metrics", "timer."+metric,
+			Fields{"value": strconv.FormatInt(value, 10),
+				"type": "timer"})
+	}
 }
