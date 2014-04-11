@@ -70,7 +70,7 @@ func (self *MzConfig) Get(key string, def string) string {
 /* Set a value if it's not already defined
  */
 func (self *MzConfig) SetDefault(key string, val string) string {
-	if val, ok := self.config[key]; !ok {
+	if _, ok := self.config[key]; !ok {
 		self.config[key] = val
 	}
 	return self.config[key].(string)
