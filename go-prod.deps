@@ -1,0 +1,4 @@
+code.google.com/p/go-uuid/uuid -d
+github.com/mozilla-services/heka/client
+github.com/mozilla-services/heka/message
+github.com/cactus/go-statsd-client/statsd
