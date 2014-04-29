@@ -68,8 +68,8 @@ func (self *MzConfig) Get(key, def string) string {
 }
 
 func (self *MzConfig) Contains(key string) bool {
-    _, ok := self.config[key]
-    return ok
+	_, ok := self.config[key]
+	return ok
 }
 
 /* Set a value if it's not already defined
@@ -83,9 +83,9 @@ func (self *MzConfig) SetDefault(key, val string) string {
 
 /* Override the value
  */
-func (self *MzConfig) Override(key, val string) string{
-    self.config[key] = val
-    return val
+func (self *MzConfig) Override(key, val string) string {
+	self.config[key] = val
+	return val
 }
 
 /* Test for a boolean flag. Missing flags are false.
@@ -119,7 +119,6 @@ func (self MzConfig) SetDefaultFlag(key string, val bool) (flag bool) {
 	self.flags[key] = val
 	return val
 }
-
 
 // o4fs
 // vim: set tabstab=4 softtabstop=4 shiftwidth=4 noexpandtab

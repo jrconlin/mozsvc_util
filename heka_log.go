@@ -58,14 +58,14 @@ func NewHekaLogger(conf *MzConfig) *HekaLogger {
 
 	pid := int32(os.Getpid())
 
-    dhost, _ := os.Hostname()
+	dhost, _ := os.Hostname()
 	conf.SetDefaultFlag("heka.show_caller", false)
-    conf.SetDefault("logger.filter", "10")
+	conf.SetDefault("logger.filter", "10")
 	filter, _ = strconv.ParseInt(conf.Get("logger.filter", "10"), 0, 0)
 	if conf.GetFlag("heka.use") {
 		encoder = client.NewProtobufEncoder(nil)
 		sender, err = client.NewNetworkSender(conf.Get("heka.sender", "tcp"),
-            conf.Get("heka.server_addr", "127.0.0.1:5565"))
+			conf.Get("heka.server_addr", "127.0.0.1:5565"))
 		if err != nil {
 			log.Panic("Could not create sender ", err)
 		}
