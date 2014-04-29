@@ -26,7 +26,7 @@ type HekaLogger struct {
 	logname  string
 	pid      int32
 	hostname string
-	conf     MzConfig
+	conf     *MzConfig
 	tracer   bool
 	filter   int64
 }
@@ -47,7 +47,7 @@ const (
 type Fields map[string]string
 
 // Create a new Heka logging interface.
-func NewHekaLogger(conf MzConfig) *HekaLogger {
+func NewHekaLogger(conf *MzConfig) *HekaLogger {
 	//Preflight
 	var encoder client.Encoder = nil
 	var sender client.Sender = nil
